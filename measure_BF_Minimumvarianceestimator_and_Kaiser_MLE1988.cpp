@@ -40,7 +40,7 @@ using namespace std::chrono;
 
 // declare global variables and functions - full function definitions can be found after main()
 string mock_data_file_name;
-string powerspectrum_file_name = "two_powerspectrum_SDSS_simplemock_z=0.csv";
+string powerspectrum_file_name = "powerspectrum.csv";
 
 void read_in_mock_file_data(); // function decleration to read in mock data - function definition can be found below main()
 void read_in_density_power_spectrum(); // function to read in the matter power spectrum (for a range of different ks)
@@ -186,22 +186,22 @@ int main (int argc, char **argv) {
 
     auto start = high_resolution_clock::now(); // starting timer for script execution
 
-    int ID = atoi(argv[1]);
+    //int ID = atoi(argv[1]);
 
-    int origmock_num = floor(ID/32) + 1;
+    //int origmock_num = floor(ID/32) + 1;
 
-    if ( ID%32 == 0 )
+    /*if ( ID%32 == 0 )
     {
       origmock_num = floor(ID/32);
     }
 
     int BFnum = ID - (origmock_num-1)*32;
-    
-    mock_data_file_name = ("gaussian_mock_wBF_data_OR_"+ to_string(origmock_num)+"_BF_"+to_string(BFnum)+"_ID_"+to_string(ID)+".dat");
+    */
+    //mock_data_file_name = ("gaussian_mock_wBF_data_OR_"+ to_string(origmock_num)+"_BF_"+to_string(BFnum)+"_ID_"+to_string(ID)+".dat");
     //mock_data_file_name = ("gaussian_mocks_BFs/gaussian_mock_wBF_BF_5000_halfsky_2/" + mock_data_file_name);
-    mock_data_file_name = ("gaussian_mocks_small/gaussian_mocks_BFadd_500_halfsky/" + mock_data_file_name);
+    mock_data_file_name = "example_surveymock.dat";
 
-    cout << mock_data_file_name << endl << ID << " " << origmock_num << " " << BFnum << endl;
+    //cout << mock_data_file_name << endl << ID << " " << origmock_num << " " << BFnum << endl;
 
     // call our function to read in the mock data 
     read_in_mock_file_data();
@@ -1163,7 +1163,7 @@ vector< vector<double> > compute_Q_qi(){
     
     
     //---------------------------------------------------------------------------------------//
-    /*
+    
     double norm = 0.0; // normalisation of integral over density function 
 
     //double integral_res = (  M_PI*C*(  pow(M_PI, 0.5)*pow(C,0.5)*erf(distance_max_ideal_survey/pow(C, 0.5)) - 2.0*distance_max_ideal_survey*exp( -pow(distance_max_ideal_survey,2)/C ) ) );
@@ -1204,10 +1204,10 @@ vector< vector<double> > compute_Q_qi(){
             
         } 
     } //end while loop 
-    */
+    
     //---------------------------------------------------------------------------------------//
     //---------------------------------------------------------------------------------------//
-
+    /*
     string line; // we will loop through the lines in the file 
     int numoflines = 0; // counter for lines in file 
     ifstream idealdata; //instantiating object for mockdata file to read in 
@@ -1235,7 +1235,7 @@ vector< vector<double> > compute_Q_qi(){
       numoflines += 1;
     } // end of while loop through mock data file 
     idealdata.close();
-
+    */
     //---------------------------------------------------------------------------------------//
 
 
