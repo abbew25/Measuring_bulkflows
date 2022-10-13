@@ -1000,7 +1000,7 @@ vector< vector<double> > compute_R_ij(){
             
                 R_ij_matrix[i][j] = term1 + term2 + term3; 
 
-                cout << i << " " << j << " " << term1 << " " << term2 << " " << term3 << endl; 
+                //cout << i << " " << j << " " << term1 << " " << term2 << " " << term3 << endl; 
                 // cout << i << " ";
                 // cout << j << " ";
                 // cout << integral_prefactor*(1.0/3.0)*cos(alpha)*(gsl_spline_eval(P_mm_k_j0_kA_spline, A, P_mm_k_j0_kA_acc) 
