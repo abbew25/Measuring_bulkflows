@@ -1,8 +1,8 @@
 # Measuring_bulkflows
-Codes to implement various methods to calculate the Bulk Flow from a peculiar velocity survey. Currently in the processing of being debugged for issues. Probably wouldn't rely on it for accurate calculations at this point...
+Codes to implement various methods to calculate the Bulk Flow from a peculiar velocity survey. Currently in the processing of being debugged some issues in my code. Probably wouldn't rely on it for accurate calculations at this point...
 
 
-I should not here also that some parts of this code have been largely inspired by code shared with me by Cullan Howlett. 
+I should not here also that some parts of this code have been largely inspired by code shared with me by Cullan Howlett.
 
 
 Should be able to compile the code like this: 
