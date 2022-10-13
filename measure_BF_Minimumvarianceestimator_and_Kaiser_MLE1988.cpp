@@ -1,7 +1,8 @@
 
 // a few versions of a script saved with this name in my files but this version
 // should be the only version without any bugs (at least in theory)
-// does MVE of Feldman 2010, and MLE of Kaiser 1988
+// computes the BF using the MVE of Feldman 2010 first, and then using MLE of Kaiser 1988 second
+
 
 // To compile: 
 // g++-11 -lgsl -lgslcblas -fopenmp -lm -llapack -lblas measure_BF_gaussian_mock_data_version3.cpp -o measure_BF_gaussian_mock_data_version3.exe
@@ -98,7 +99,7 @@ double number_objects_ideal_distribution(double r, double A);
 
 vector< vector<double> > compute_Q_qi(); // get the covariance of the real data velocities with an simulated ideal survey 
 
-// get the langrange multiplier 
+// compute the langrange multiplier 
 // vector< vector<double> > compute_lagrange_multiplier(vector< vector<double> >inv_M_pl, 
 // vector< vector<double> > G_mn_inv, vector< vector<double> > Q_lm); 
 
@@ -126,12 +127,14 @@ double ra_angle, double dec_angle, double r_dist); // function to get doc produc
 double integrand_pk_j2_klimAgoesto0(double k, void * params_int_from_above); // function to get integral over k of 
 // P(k)j)2(kA)/A^2 in the limit A goes to zero, which becomes int of k of P(k)k^2/15
 
+double integrand_pk(double k, void * params_int_from_above); // integrate over the power spectrum 
+
 void write_matrix_2_file(vector< vector<double> > matrix_2_write, string filepathname);
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 
-double H0 = 67.32; // km/s/MPC (Hubble constant)
+double H0 = 67.32; // km/s/MPC (Hubble constant). No, my code is not in units of little h for distances, although it probably should be.
 double Omega_matter_0 = 0.30; // dimensionless matter density 
 double Omega_Lambda_0 = 1 - Omega_matter_0; // cosmological constant 
 double eos_matter = 0.0; // equation of state for matter
@@ -149,11 +152,12 @@ double C = 2.0*R_I*R_I; // just a constant to use later
 //double max_ideal_declination = 180.0; // degrees
 //double max_ideal_right_ascension = 360.0; // degrees 
 double max_ideal_RA = 360.0;
-double max_ideal_Dec = 180.0; // setting sky coverage for ideal survey 
-
+double max_ideal_Dec = 180.0; // setting sky coverage for ideal survey (it should be fully sky, basically). What I call RA/Dec in this code 
+// this code is really just theta, phi, because the values I read in range from 0-360, and 0-180 for RA, Dec (Dec should really be -180,180 for real data).
+// so values only need to be converted from degrees to radians for angles
 
 // vectors where we will save data from in file (mock data)
-vector<double> RA,Dec,z_obs,logdist,logdist_err;
+vector<double> RA,Dec,z_obs,logdist,logdist_err; 
 
 // get data from file with power spectrum computed with CLASS
 vector<double> k_vector, Pk_vector;
@@ -237,13 +241,13 @@ int main (int argc, char **argv) {
     // compute the matrix G_ij of the galaxies (G_ij (aka R_ij) = peculiar velocity data covariance matrix)
     vector< vector<double> > G_ij = compute_R_ij(); // getting velocity covariance part 
 
-    write_matrix_2_file(G_ij, "Gij_check.dat");
+    //write_matrix_2_file(G_ij, "Gij_check.dat");
 
     vector< vector<double> > G_ij_inverse = compute_matrix_inverse(G_ij);
 
-    cout << "G_ij done" << endl;
+    cout << "compute G_ij done" << endl;
 
-    write_matrix_2_file(G_ij_inverse, "Gijinv_check.dat");
+    //write_matrix_2_file(G_ij_inverse, "Gijinv_check.dat");
 
     // return 0; 
 
@@ -252,28 +256,28 @@ int main (int argc, char **argv) {
 
     //write_matrix_2_file(M_pq, "Mpq_mine_check.dat");
 
-    print_2D_matrix(M_pq, "M_pq");
-    cout << "M_pq done" << endl;
+    //print_2D_matrix(M_pq, "M_pq");
+    cout << "compute M_pq done" << endl;
 
 
     vector< vector<double> > inv_M_pq = compute_matrix_inverse(M_pq); // computing the inverse of this matrix
 
     //write_matrix_2_file(inv_M_pq, "inv_Mpq_mine_check.dat");
-    print_2D_matrix(inv_M_pq, "inv_Mpq_mine_check.dat");
+    //print_2D_matrix(inv_M_pq, "inv_Mpq_mine_check.dat");
   
     //return 0; 
 
     // now construct the matrix Q_qi (size = num_mode_funcs*num_galaxies in real survey (size mock_data))
     vector< vector<double> > Q_qi_mat = compute_Q_qi();
 
-    write_matrix_2_file(Q_qi_mat, "Q_qi");
+    //write_matrix_2_file(Q_qi_mat, "Q_qi");
 
-    //cout << "Q_qi done" << endl; 
+    cout << "compute Q_qi done" << endl; 
 
     // ok, now construct the lagrange multiplier 
     vector< vector<double> > lambda_pq = compute_lagrange_multiplier(inv_M_pq, G_ij_inverse, Q_qi_mat);
 
-    cout << "lambda done" << endl;
+    cout << "compute lambda done" << endl;
 
     //print_2D_matrix(lambda_pq, "lambda_pq");
 
@@ -282,7 +286,7 @@ int main (int argc, char **argv) {
     // now we can finally calculate the weights 
     vector< vector<double> > weights_pn = compute_weights_for_velocity_components(G_ij_inverse, Q_qi_mat, lambda_pq);
 
-    cout << "weights done" << endl;
+    cout << "compute MVE weights done" << endl;
 
     
     // for (int i = 0; i < 10; i++){
@@ -293,10 +297,10 @@ int main (int argc, char **argv) {
 
     // return 0;
  
-    write_matrix_2_file(weights_pn, "w_pn");
+    //write_matrix_2_file(weights_pn, "w_pn");
 
     // return 0;
-    // now calculate the BF components :D !!
+    // now calculate the BF components (as given by the MVE method) :D !!
 
     double BF_x = 0; // treating q = 0 as the x direction
     double BF_y = 0; // treating q = 1 as the y direction
@@ -317,7 +321,8 @@ int main (int argc, char **argv) {
     vector< vector<double> > cov_vel_moments_ab = calculate_covariance_velocity_moments(weights_pn, G_ij);
 
 
-    // compare BF output to result from just using ideal weights 
+    // compare BF output to result from just using ideal weights (summing up projections of radial velocities onto 3 coordinate axes)
+    // this is definitely not guaranteed to give the right result.
     
     double BF_x_2 = 0;
     double BF_y_2 = 0; 
@@ -338,7 +343,7 @@ int main (int argc, char **argv) {
     // BF_y_2 = BF_y_2/integral_n_r;
     // BF_z_2 = BF_z_2/integral_n_r;
 
-    cout << "BFs MVE, error, BFs (ideal weights): " << endl;
+    cout << "BFs recovered from MVE, their error, BFs recovered (using ideal weights): " << endl;
 
     cout << BF_x << " " << sqrt(cov_vel_moments_ab[0][0]) << " " << BF_x_2 << endl;
     cout << BF_y << " " << sqrt(cov_vel_moments_ab[1][1]) << " " << BF_y_2 << endl;
@@ -369,7 +374,7 @@ int main (int argc, char **argv) {
 
     // checking more general condition is being met 
     //cout << "Checking condition: " << endl;
-    vector< vector<double> > cond_general = check_results_condition_met(weights_pn);
+    //vector< vector<double> > cond_general = check_results_condition_met(weights_pn);
 
     //print_2D_matrix(cond_general, "checking condition:");
     // for (int m = 0; m < num_mode_funcs; m++){
@@ -382,7 +387,7 @@ int main (int argc, char **argv) {
     // }
 
     
-    // NEED TO COMMENT THIS BACK IN ------------------------------
+    // NEED TO COMMENT THIS BACK IN to write results to a file ------------------------------
     
     /*
     // write the results to a file 
