@@ -138,7 +138,7 @@ double distance_min_ideal_survey = 0.0; // mpc
 double C = 2.0*R_I*R_I; // just a constant to use later 
 double max_ideal_RA = 360.0;
 double max_ideal_Dec = 180.0; // setting sky coverage for ideal survey (it should be fully sky, basically). What I call RA/Dec in this code 
-// this code is really just theta, phi, because the values I read in range from 0-360, and 0-180 for RA, Dec (Dec should really be -180,180 for real data).
+// this code is really just RA and Dec+90.0, because the values I read in range from 0-360, and 0-180 for RA, Dec (Dec should really be -90,90 for real data).
 // so values only need to be converted from degrees to radians for angles
 
 // vectors where we will save data from in file (mock data)
