@@ -1,9 +1,10 @@
 # Measuring_bulkflows
-Codes to implement various methods to calculate the Bulk Flow from a peculiar velocity survey. Currently in the processing of being debugged some issues in my code. Probably wouldn't rely on it for accurate calculations at this point...
+Codes to implement various methods to calculate the Bulk Flow from a peculiar velocity survey. This code calculates the MLE Bulk Flow (Kaiser, 1988) and the Minimum Variance Estimator by Feldman et al. (2010) Bulk Flow.
 
 
-I should not here also that some parts of this code have been largely inspired by code shared with me by Cullan Howlett.
+I should note here, some parts of this code have been largely inspired by code shared with me by Cullan Howlett to calculate the velocity covariance matrix.
 
+This code should obtain similar results to the publicly available code of Morag Scrimgeour that computes the same MVE Bulk Flow.
 
 Should be able to compile the code like this: 
 
