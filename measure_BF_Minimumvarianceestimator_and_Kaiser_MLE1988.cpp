@@ -609,8 +609,6 @@ double integrand_pk_j2_kA(double k, void * params_int_from_above){
 
 double integrand_pk_j2_klimAgoesto0(double k, void * params_int_from_above){
 
-  //params_int2 these_params = *(params_int2*)params_int_from_above;
-  
   double pk_val = gsl_spline_eval(P_mm_k_spline, k, P_mm_k_acc);
   double res = pk_val*(k*k)/15.0;
 
@@ -749,14 +747,19 @@ vector< vector<double> > compute_R_ij(){
     // R_ij_eps
     for (int i = 0; i < z_obs.size(); i ++){
 
-        R_ij_matrix[i][i] += ( pow(object_pv_errs[i],2.0)  + pow(sigma_star, 2.0) );
-        //cout << R_ij_matrix[i][i] << endl; 
+        for (int j = 0; j < z_obs.size(); j ++){
+        
+          if (i == j){
+              R_ij_matrix[i][i] = ( pow(object_pv_errs[i],2.0)  + pow(sigma_star, 2.0) );
+          } else {
+              R_ij_matrix[i][j] = 0.0; 
+          }
+
+        }
     }
 
     // we will use threading to split up the matrix elements between threads to speed up the task of building this matrix
-    //#pragma omp parallel for
     for (int i = 0; i < z_obs.size(); i++){
-        //cout << omp_get_thread_num() << endl; 
         double kmin = k_vector[0];
         double kmax = k_vector[(k_vector.size() - 1.0)];
         double integral_prefactor = pow(Omega_matter_0, 1.1)*(H0*H0)/(2.0*(M_PI*M_PI));
@@ -773,14 +776,14 @@ vector< vector<double> > compute_R_ij(){
             mode_func_dot(1, RA[i], Dec[i], idist)*mode_func_dot(1, RA[j], Dec[j], jdist) 
             + mode_func_dot(2, RA[i], Dec[i], idist)*mode_func_dot(2, RA[j], Dec[j], jdist);
            
+            if (val >= 1.0 ) { val = 1.0; }
+            if (val <= -1.0) { val = -1.0;}
+
             double alpha = acos( val  );
 
             if (i == j){alpha = 0.0;}
 
             if (RA[i] == RA[j] && Dec[i] == Dec[j]) { alpha = 0; }
-
-            if (val >= 1.0 ) { alpha = 0.0; }
-            if (val <= -1.0) { alpha = M_PI;}
 
             double A = pow(  (pow(idist,2) + pow(jdist,2) - 2.0*idist*jdist*cos(alpha)) , 0.5);
 
@@ -800,7 +803,7 @@ vector< vector<double> > compute_R_ij(){
               throw "A or alpha are nan (in compute_R_ij()).";
               }
 
-          
+          if (abs(A) < 1e-6) { A = 0.0; }
 
             if (A == 0){ 
                 R_ij_matrix[i][j] = integral_prefactor*(1.0/3.0)*int_over_pk; 
@@ -926,7 +929,6 @@ vector< vector<double> > compute_M_pq(vector< vector<double> > G_ij_inverse_matr
 
               M_pq_matrix[p][q] += 0.5*G_ij_inverse_matrix[m][n]*mode_func_dot(p,RA[m],Dec[m],realspace_galaxy_distances[m])*mode_func_dot(q,RA[n],Dec[n],realspace_galaxy_distances[n]);
               
-
             } // nth galaxy end 
           } // mth galaxy end 
 
@@ -1021,13 +1023,13 @@ vector< vector<double> > compute_Q_qi(){
             double val = mode_func_dot(0, RA[i], Dec[i], idist)*mode_func_dot(0, RA_ideal_survey[jdash], Dec_ideal_survey[jdash], jddist) + 
             mode_func_dot(1, RA[i], Dec[i], idist)*mode_func_dot(1, RA_ideal_survey[jdash], Dec_ideal_survey[jdash], jddist) 
             + mode_func_dot(2, RA[i], Dec[i], idist)*mode_func_dot(2, RA_ideal_survey[jdash], Dec_ideal_survey[jdash], jddist);
+            
+            if (val >= 1.0 ) { val = 1.0; }
+            if (val <= -1.0) { val = -1.0; }
+          
             double alpha = acos( val );
 
             if (RA[i] == RA_ideal_survey[jdash] && Dec[i] == Dec_ideal_survey[jdash]){ alpha = 0.0; }
-
-            if (round(val*1000.0)/1000.0 == 1.0 ) { alpha = 0; }
-
-            if (round(val*1000.0)/1000.0 == -1.0) {alpha = M_PI; }
 
             double A = pow(  (pow(idist,2) + pow(jddist,2) - 2.0*idist*jddist*cos(alpha)) , 0.5);
 
@@ -1040,6 +1042,8 @@ vector< vector<double> > compute_Q_qi(){
               cout << "alpha: " << alpha << endl;
               throw "A or alpha are nan (in compute_Q_qi()).";
               }
+
+            if (abs(A) < 1e-6) { A = 0.0; }
 
             if (A == 0){ 
                 cov_si_sjdash[i][jdash] = integral_prefactor*(1.0/3.0)*int_over_pk;
@@ -1058,8 +1062,7 @@ vector< vector<double> > compute_Q_qi(){
 
     // ok so have the covariance matrix. Now get the matrix Q_qi
     
-    vector< vector<double> > Q_qi(num_mode_funcs, vector<double>(realspace_galaxy_distances.size()));
-    //#pragma omp parallel for 
+    vector< vector<double> > Q_qi(num_mode_funcs, vector<double>(realspace_galaxy_distances.size())); 
     for (int i = 0; i < realspace_galaxy_distances.size(); i++){ // loop through i objects in real data
         for(int q = 0; q < num_mode_funcs; q++){ // loop through q orthogonal modes 
 
