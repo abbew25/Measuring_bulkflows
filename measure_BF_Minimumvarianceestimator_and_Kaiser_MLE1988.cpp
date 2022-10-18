@@ -1,16 +1,9 @@
 
-// a few versions of a script saved with this name in my files but this version
-// should be the only version without any bugs (at least in theory)
 // computes the BF using the MVE of Feldman 2010 first, and then using MLE of Kaiser 1988 second
 
 
 // To compile: 
-// g++-11 -lgsl -lgslcblas -fopenmp -lm -llapack -lblas measure_BF_gaussian_mock_data_version3.cpp -o measure_BF_gaussian_mock_data_version3.exe
-
-// g++-11 -I/usr/local/include -L/usr/local/lib -I/opt/homebrew/include -L/opt/homebrew/lib -lgsl -lgslcblas -fopenmp -lm 
-// -llapack -lblas -larmadillo  measure_BF_gaussian_mock_data_version3.cpp -o measure_BF_gaussian_mock_data_version3.exe
-
-/* g++-11 -I/usr/local/include -L/usr/local/lib -lgsl -lgslcblas -fopenmp -lm -llapack -lblas measure_BF_gaussian_mock_data_version3.cpp -o measure_BF_gaussian_mock_data_version3.exe */
+// g++-11 -lgsl -lgslcblas -fopenmp -lm -llapack -lblas measure_BF_Minimumvarianceestimator_and_Kaiser_MLE1988.cpp -o measure_BF_Minimumvarianceestimator_and_Kaiser_MLE1988.exe
 // ------------------------------------------------------------------------------------------------------------
 
 // script for MVE analysis 
@@ -99,10 +92,6 @@ double number_objects_ideal_distribution(double r, double A);
 
 vector< vector<double> > compute_Q_qi(); // get the covariance of the real data velocities with an simulated ideal survey 
 
-// compute the langrange multiplier 
-// vector< vector<double> > compute_lagrange_multiplier(vector< vector<double> >inv_M_pl, 
-// vector< vector<double> > G_mn_inv, vector< vector<double> > Q_lm); 
-
 vector< vector<double> > compute_lagrange_multiplier(vector< vector<double> > inv_M_ql, 
 vector< vector<double> > G_mn_inv, vector< vector<double> > Q_pm);
 
@@ -142,15 +131,11 @@ double eos_lambda = -1.0; // Eq of state for dark energy
 double light_speed = 299792.458; // speed of light in km/s
 double sigma_star = 300.0; // ( km/s ) - this is the the 1D velocity dispersion 
 int num_mode_funcs = 3; // use 3 for just BF, 9 for BF + shear, 19 for BF + shear + octupoles
-// int num_objects_readin = 10000; 
-// int num_objects_total_data_file = 10000; // roughly anyway
 int num_ideal_objects_read_in = 1500; // objects to read in from a data file with an 'ideal' survey selection 
 double R_I = 70.0; // Mpc, ideal survey gaussian width / standard deviation 
 double distance_max_ideal_survey = 500.0; // mpc 
 double distance_min_ideal_survey = 0.0; // mpc 
 double C = 2.0*R_I*R_I; // just a constant to use later 
-//double max_ideal_declination = 180.0; // degrees
-//double max_ideal_right_ascension = 360.0; // degrees 
 double max_ideal_RA = 360.0;
 double max_ideal_Dec = 180.0; // setting sky coverage for ideal survey (it should be fully sky, basically). What I call RA/Dec in this code 
 // this code is really just theta, phi, because the values I read in range from 0-360, and 0-180 for RA, Dec (Dec should really be -180,180 for real data).
@@ -186,28 +171,10 @@ int main (int argc, char **argv) {
 
     auto start = high_resolution_clock::now(); // starting timer for script execution
 
-    //int ID = atoi(argv[1]);
-
-    //int origmock_num = floor(ID/32) + 1;
-
-    /*if ( ID%32 == 0 )
-    {
-      origmock_num = floor(ID/32);
-    }
-
-    int BFnum = ID - (origmock_num-1)*32;
-    */
-    //mock_data_file_name = ("gaussian_mock_wBF_data_OR_"+ to_string(origmock_num)+"_BF_"+to_string(BFnum)+"_ID_"+to_string(ID)+".dat");
-    //mock_data_file_name = ("gaussian_mocks_BFs/gaussian_mock_wBF_BF_5000_halfsky_2/" + mock_data_file_name);
     mock_data_file_name = "example_surveymock.dat";
-
-    //cout << mock_data_file_name << endl << ID << " " << origmock_num << " " << BFnum << endl;
 
     // call our function to read in the mock data 
     read_in_mock_file_data();
-
-    // cout << RA.size() << endl;
-    // return 0;
 
     // call our function to read in the matter density power spectrum
     read_in_density_power_spectrum();
@@ -221,56 +188,22 @@ int main (int argc, char **argv) {
     // get distances to each galaxy in real space 
     get_real_galaxy_distances();
 
-    // for (int i = 0; i < 10; i++){
-    //   cout << realspace_galaxy_distances[i] << "a" << endl; 
-    // }
-
-    // ofstream filetest;
-    // filetest.open("modefuncstest.dat");
-    // // print mode functions to a file 
-    // for (int i = 0; i < Dec.size(); i++){
-    //     filetest << RA[i] << " " << Dec[i] << " " << z_obs[i] << " ";
-    //     filetest << mode_func_dot(0, RA[i], Dec[i], realspace_galaxy_distances[i]) << " ";
-    //     filetest << mode_func_dot(1, RA[i], Dec[i], realspace_galaxy_distances[i]) << " ";
-    //     filetest << mode_func_dot(2, RA[i], Dec[i], realspace_galaxy_distances[i]) << endl;
-    // }
-    // filetest.close();
-
-    // return 0; 
-
     // compute the matrix G_ij of the galaxies (G_ij (aka R_ij) = peculiar velocity data covariance matrix)
     vector< vector<double> > G_ij = compute_R_ij(); // getting velocity covariance part 
-
-    //write_matrix_2_file(G_ij, "Gij_check.dat");
 
     vector< vector<double> > G_ij_inverse = compute_matrix_inverse(G_ij);
 
     cout << "compute G_ij done" << endl;
 
-    //write_matrix_2_file(G_ij_inverse, "Gijinv_check.dat");
-
-    // return 0; 
-
     // now construct the matrix M_pq (only works right now for 3 modes for BF only)
     vector< vector<double> > M_pq = compute_M_pq(G_ij_inverse);
 
-    //write_matrix_2_file(M_pq, "Mpq_mine_check.dat");
-
-    //print_2D_matrix(M_pq, "M_pq");
     cout << "compute M_pq done" << endl;
 
-
     vector< vector<double> > inv_M_pq = compute_matrix_inverse(M_pq); // computing the inverse of this matrix
-
-    //write_matrix_2_file(inv_M_pq, "inv_Mpq_mine_check.dat");
-    //print_2D_matrix(inv_M_pq, "inv_Mpq_mine_check.dat");
   
-    //return 0; 
-
     // now construct the matrix Q_qi (size = num_mode_funcs*num_galaxies in real survey (size mock_data))
     vector< vector<double> > Q_qi_mat = compute_Q_qi();
-
-    //write_matrix_2_file(Q_qi_mat, "Q_qi");
 
     cout << "compute Q_qi done" << endl; 
 
@@ -279,34 +212,14 @@ int main (int argc, char **argv) {
 
     cout << "compute lambda done" << endl;
 
-    //print_2D_matrix(lambda_pq, "lambda_pq");
-
-    //return 0; 
-
     // now we can finally calculate the weights 
     vector< vector<double> > weights_pn = compute_weights_for_velocity_components(G_ij_inverse, Q_qi_mat, lambda_pq);
 
     cout << "compute MVE weights done" << endl;
 
-    
-    // for (int i = 0; i < 10; i++){
-    //   cout << weights_pn[0][i] << " ";
-    //   cout << weights_pn[1][i] << " ";
-    //   cout << weights_pn[2][i] << endl; 
-    // }
-
-    // return 0;
- 
-    //write_matrix_2_file(weights_pn, "w_pn");
-
-    // return 0;
-    // now calculate the BF components (as given by the MVE method) :D !!
-
     double BF_x = 0; // treating q = 0 as the x direction
     double BF_y = 0; // treating q = 1 as the y direction
     double BF_z = 0; // treating q = 2 as the z direction
-
-    //cout << z_obs.size() << " " << object_pvs.size() << endl;
 
     for (int i = 0; i < z_obs.size(); i++){
         BF_x += weights_pn[0][i]*object_pvs[i];
@@ -314,12 +227,8 @@ int main (int argc, char **argv) {
         BF_z += weights_pn[2][i]*object_pvs[i];
     }
 
-    //cout << BF_x << " " << BF_y << " " << BF_z << endl;
-    //return 0;
-    
     // now calculate the error bars for the BF components
     vector< vector<double> > cov_vel_moments_ab = calculate_covariance_velocity_moments(weights_pn, G_ij);
-
 
     // compare BF output to result from just using ideal weights (summing up projections of radial velocities onto 3 coordinate axes)
     // this is definitely not guaranteed to give the right result.
@@ -335,13 +244,8 @@ int main (int argc, char **argv) {
           BF_x_2 += 3.0*object_pvs[i]*mode_func_dot(0, RA[i], Dec[i], realspace_galaxy_distances[i])*(ideal_weight_gauss); ///z_obs.size();
           BF_y_2 += 3.0*object_pvs[i]*mode_func_dot(1, RA[i], Dec[i], realspace_galaxy_distances[i])*(ideal_weight_gauss); // /z_obs.size();
           BF_z_2 += 3.0*object_pvs[i]*mode_func_dot(2, RA[i], Dec[i], realspace_galaxy_distances[i])*(ideal_weight_gauss);// /z_obs.size();
-          //integral_n_r += ideal_weight_gauss;
           
       }
-
-    // BF_x_2 = BF_x_2/integral_n_r;
-    // BF_y_2 = BF_y_2/integral_n_r;
-    // BF_z_2 = BF_z_2/integral_n_r;
 
     cout << "BFs recovered from MVE, their error, BFs recovered (using ideal weights): " << endl;
 
@@ -349,51 +253,13 @@ int main (int argc, char **argv) {
     cout << BF_y << " " << sqrt(cov_vel_moments_ab[1][1]) << " " << BF_y_2 << endl;
     cout << BF_z << " " << sqrt(cov_vel_moments_ab[2][2]) << " " << BF_z_2 << endl;
 
-    // check if condition is satisfied
-    // double cond1, cond2, cond3 = 0.0;
-    // for (int m = 0; m < z_obs.size(); m++){
-    //   for (int n = 0; n < z_obs.size(); n++){
-
-    //     double val = cos( RA[n]*M_PI/180.0 )*sin( Dec[n]*M_PI/180.0 )*cos( RA[m]*M_PI/180.0 )*sin( Dec[m]*M_PI/180.0 ) +  
-    //     sin( RA[n]*M_PI/180.0 )*sin( RA[m]*M_PI/180.0 )*sin( Dec[n]*M_PI/180.0 )*sin(Dec[m]*M_PI/180.0 ) + 
-    //     cos( Dec[n]*M_PI/180.0 )*cos( Dec[m]*M_PI/180.0 );
-    //     double alpha = acos( val  );
-
-    //     if (n == m){alpha = 0.0;}
-
-    //     cond1 += weights_pn[0][n]*weights_pn[0][m]*(1.0/3.0)*cos(alpha);
-
-    //     cond2 += weights_pn[1][n]*weights_pn[1][m]*(1.0/3.0)*cos(alpha);
-
-    //     cond3 += weights_pn[2][n]*weights_pn[2][m]*(1.0/3.0)*cos(alpha);
-
-    //   }
-    // }
-
-    // cout << "Checking condition: " << to_string(cond1) << " " << to_string(cond2) << " " << to_string(cond3) << endl;
-
-    // checking more general condition is being met 
-    //cout << "Checking condition: " << endl;
-    //vector< vector<double> > cond_general = check_results_condition_met(weights_pn);
-
-    //print_2D_matrix(cond_general, "checking condition:");
-    // for (int m = 0; m < num_mode_funcs; m++){
-    //   for (int n = 0; n < num_mode_funcs; n++){
-
-    //     cout << cond_general[n][m] << " ";
-
-    //   }
-    //   cout << endl;
-    // }
-
     
     // NEED TO COMMENT THIS BACK IN to write results to a file ------------------------------
     
-    /*
+    
     // write the results to a file 
     ofstream results_file;
-    results_file.open(("gaussian_mocks_BFs_results/gmocks_results_5000_fullsky_new/recoveredBF_MVE_mock_ID_"+to_string(ID)+".txt" ));
-    //results_file.open(("recoveredBF_MVE_mock_ID_"+to_string(ID)+".txt" ));
+    results_file.open(("BF_MVE_result.txt" ));
     results_file << ID << " " << origmock_num << " " << BFnum << " " << BF_x << " " << BF_y << " " << BF_z;
     results_file << " " << sqrt(cov_vel_moments_ab[0][0]) << " " << sqrt(cov_vel_moments_ab[1][1]) << " " << sqrt(cov_vel_moments_ab[2][2]) << " ";
     results_file << BF_x_2 << " " << BF_y_2 << " " << BF_z_2 << endl;
@@ -401,8 +267,7 @@ int main (int argc, char **argv) {
 
     // write the covariance matrix to a file 
     ofstream cov_file;
-    cov_file.open(("gaussian_mocks_BFs_results/gmocks_results_5000_fullsky_new/recoveredcovmatrix_MVE_mock_ID_"+to_string(ID)+".txt" ));
-    //cov_file.open(("recoveredcovmatrix_MVE_mock_ID_"+to_string(ID)+".txt" ));
+    cov_file.open(("BF_MVE_cov.txt" ));
     for (int i = 0; i < num_mode_funcs; i++){
       for (int j = 0; j < num_mode_funcs; j++){
         cov_file << cov_vel_moments_ab[i][j] <<  " ";
@@ -410,8 +275,6 @@ int main (int argc, char **argv) {
       cov_file << endl;
     }
     cov_file.close();
-    */
-    
 
     // calculate the MLE weights 
 
@@ -427,8 +290,6 @@ int main (int argc, char **argv) {
     double BF_y_mle = 0; // treating q = 1 as the y direction
     double BF_z_mle = 0; // treating q = 2 as the z direction
 
-    //cout << z_obs.size() << " " << object_pvs.size() << endl;
-
     for (int i = 0; i < z_obs.size(); i++){
         BF_x_mle += MLE_weights_pn[0][i]*object_pvs[i];
         BF_y_mle += MLE_weights_pn[1][i]*object_pvs[i];
@@ -442,18 +303,15 @@ int main (int argc, char **argv) {
     cout << BF_z_mle << " " << sqrt(cov_matrix_MLE[2][2]) << endl;
 
     // write the results to a file 
-    /*
     ofstream results_file2;
-    results_file2.open(("gaussian_mocks_BFs_results/gmocks_results_5000_fullsky_new/recoveredBF_MLE_mock_ID_"+to_string(ID)+".txt" ));
-    //results_file2.open(("recoveredBF_MLE_mock_ID_"+to_string(ID)+".txt" ));
+    results_file2.open(("BF_MLE_result.txt" ));
     results_file2 << ID << " " << origmock_num << " " << BFnum << " " << BF_x_mle << " " << BF_y_mle << " " << BF_z_mle;
     results_file2 << " " << sqrt(cov_matrix_MLE[0][0]) << " " << sqrt(cov_matrix_MLE[1][1]) << " " << sqrt(cov_matrix_MLE[2][2]) << " ";
     results_file2.close();
 
     // write the MLE covariance matrix to a file 
     ofstream cov_file2;
-    cov_file2.open(("gaussian_mocks_BFs_results/gmocks_results_5000_fullsky_new/recoveredcovmatrix_MLE_mock_ID_"+to_string(ID)+".txt" ));
-    //cov_file2.open(("recoveredcovmatrix_MLE_mock_ID_"+to_string(ID)+".txt" ));
+    cov_file2.open(("BF_MLE_cov.txt" ));
     for (int i = 0; i < num_mode_funcs; i++){
       for (int j = 0; j < num_mode_funcs; j++){
 
@@ -463,35 +321,7 @@ int main (int argc, char **argv) {
       cov_file2 << endl;
     }
     cov_file2.close();
-    */
     
-
-    // write the MVE and MLE weights to a file to compute and plot window function later 
-    /*
-    if (ID == 1) {
-
-      ofstream weights;
-      weights.open(("gaussian_mocks_BFs_results/gmocks_results_5000_fullsky_new/weights_ID_1.txt"));
-      //weights.open(("weights.txt"));
-
-      weights << "w_x_MVE w_x_MLE w_y_MVE w_y_MLE w_z_MVE w_z_MLE" << endl;
-
-      for (int i = 0; i < z_obs.size(); i ++){
-        for (int j = 0; j < 3; j++){
-
-          weights << weights_pn[j][i] << " " << MLE_weights_pn[j][i] << " ";
-
-        }
-
-        weights << endl;
-      }
-
-      weights.close(); 
-
-    } 
-    */
-
-    //write_matrix_2_file(weights_pn, "checkingmatricesdata_MVE/weights.txt");
 
     // -----------------------------------------------------------
 
@@ -527,7 +357,6 @@ void read_in_mock_file_data() {
 
   string line; // we will loop through the lines in the file 
   int numoflines = 0; // counter for lines in file 
-  //int total_objects_actually_selected = 0;
   ifstream mockdata; //instantiating object for mockdata file to read in 
   mockdata.open(mock_data_file_name);
   if (!(mockdata.is_open())) {throw "Failed to open input file: mock data.";}
@@ -556,10 +385,6 @@ void read_in_mock_file_data() {
         logdist.push_back(stod(splitline[5])); // observed log distance ratio
         logdist_err.push_back(stod(splitline[6])); // uncertainty on log distance ratio (as determined from observations)
 
-
-        // logdist.push_back(stod(splitline[3])); // observed log distance ratio
-        // logdist_err.push_back(0.0); // uncertainty on log distance ratio (as determined from observations)
-      
     } // close of if state for numoflines > 1
 
     numoflines += 1;
@@ -704,10 +529,7 @@ double compute_z_mod(double z_observation){
   double q0 = deceleration_parameter(1.0);
   double j0 = jerk_parameter(1.0);
 
-  //cout << q0 << " " << j0 << endl; 
-
   double z_mod = z_observation*( 1.0 + 0.5*(1.0 - q0)*z_observation - (1.0/6.0)*(j0 - q0 - 3.0*(pow(q0, 2)) + 1.0 )*(pow(z_observation, 2)) );
-  //cout << z_mod << endl;
   return z_mod;
 
 }
@@ -729,7 +551,6 @@ void compute_obs_PVs_from_obs_logdist_ratios(){
     double v_peculiar_obs_err = ((light_speed*z_mod_obs)/(1.0 + z_mod_obs))*logdist_err[i]*log(10);
     object_pv_errs.push_back(v_peculiar_obs_err);
 
-    //cout << RA[i] << " " << Dec[i] << " " << v_peculiar_obs << endl; 
   }
 
 }
@@ -800,8 +621,6 @@ double integrand_pk_j2_klimAgoesto0(double k, void * params_int_from_above){
 
 double integrand_pk(double k, void * params_int_from_above){
 
-  //params_int2 these_params = *(params_int2*)params_int_from_above;
-  
   double pk_val = gsl_spline_eval(P_mm_k_spline, k, P_mm_k_acc);
 
   return pk_val;
@@ -953,10 +772,7 @@ vector< vector<double> > compute_R_ij(){
             double val = mode_func_dot(0, RA[i], Dec[i], idist)*mode_func_dot(0, RA[j], Dec[j], jdist) + 
             mode_func_dot(1, RA[i], Dec[i], idist)*mode_func_dot(1, RA[j], Dec[j], jdist) 
             + mode_func_dot(2, RA[i], Dec[i], idist)*mode_func_dot(2, RA[j], Dec[j], jdist);
-            // double val = mode_func_dot(0, RA[i], Dec[i], idist)*mode_func_dot(0, RA[j], Dec[j], jdist) + 
-            // mode_func_dot(1, RA[i], Dec[i], idist)*mode_func_dot(1, RA[j], Dec[j], jdist) 
-            // + mode_func_dot(2, RA[i], Dec[i], idist)*mode_func_dot(2, RA[j], Dec[j], jdist);
-            
+           
             double alpha = acos( val  );
 
             if (i == j){alpha = 0.0;}
@@ -987,9 +803,7 @@ vector< vector<double> > compute_R_ij(){
           
 
             if (A == 0){ 
-                R_ij_matrix[i][j] = integral_prefactor*(1.0/3.0)*int_over_pk; //gsl_spline_eval(P_mm_k_j0_kA_spline, A, P_mm_k_j0_kA_acc);//*cos(alpha)*( gsl_spline_eval(P_mm_k_j0_kA_spline, A, P_mm_k_j0_kA_acc) ) +
-                //integral_prefactor*( int_over_k_Pk_ksquared_over_15 )*idist*jdist*pow(sin(alpha), 2);
-                //cout << i << " " << j << endl; 
+                R_ij_matrix[i][j] = integral_prefactor*(1.0/3.0)*int_over_pk; 
                 
             } else {
 
@@ -1000,22 +814,12 @@ vector< vector<double> > compute_R_ij(){
             
                 R_ij_matrix[i][j] = term1 + term2 + term3; 
 
-                //cout << i << " " << j << " " << term1 << " " << term2 << " " << term3 << endl; 
-                // cout << i << " ";
-                // cout << j << " ";
-                // cout << integral_prefactor*(1.0/3.0)*cos(alpha)*(gsl_spline_eval(P_mm_k_j0_kA_spline, A, P_mm_k_j0_kA_acc) 
-                // - 2.0*gsl_spline_eval(P_mm_k_j2_kA_spline, A, P_mm_k_j2_kA_acc) ) +
-                //  integral_prefactor*(1.0/pow(A,2))*gsl_spline_eval(P_mm_k_j2_kA_spline, A, P_mm_k_j2_kA_acc)*idist*jdist*pow(sin(alpha), 2);
-                // cout << endl; 
-
             } 
 
             if (i != j) { R_ij_matrix[j][i] = R_ij_matrix[i][j]; }
 
         } // end j loop
     } // end i loop 
-    //cout << z_obs.size() << endl;
-    //cout << R_ij_matrix[1][1] << endl;
 
     return R_ij_matrix;
 
@@ -1122,16 +926,9 @@ vector< vector<double> > compute_M_pq(vector< vector<double> > G_ij_inverse_matr
 
               M_pq_matrix[p][q] += 0.5*G_ij_inverse_matrix[m][n]*mode_func_dot(p,RA[m],Dec[m],realspace_galaxy_distances[m])*mode_func_dot(q,RA[n],Dec[n],realspace_galaxy_distances[n]);
               
-              // if (p == 0 & q == 0 & m < 10 & n == 0){
-              //     cout << m << " " << G_ij_inverse_matrix[m][n] << " ";
-              //     cout << mode_func_dot(p,RA[m],Dec[m],realspace_galaxy_distances[m]) << " ";
-              //     cout << mode_func_dot(q,RA[n],Dec[n],realspace_galaxy_distances[n]) << endl; 
-              // }
 
             } // nth galaxy end 
           } // mth galaxy end 
-
-        //if (p != q){  M_pq_matrix[q][p] = M_pq_matrix[p][q]; }
 
         } // qth loop end
       } // pth loop end
@@ -1166,8 +963,6 @@ vector< vector<double> > compute_Q_qi(){
     
     double norm = 0.0; // normalisation of integral over density function 
 
-    //double integral_res = (  M_PI*C*(  pow(M_PI, 0.5)*pow(C,0.5)*erf(distance_max_ideal_survey/pow(C, 0.5)) - 2.0*distance_max_ideal_survey*exp( -pow(distance_max_ideal_survey,2)/C ) ) );
-    //integral_res = integral_res - (  M_PI*C*(  pow(M_PI, 0.5)*pow(C, 0.5)*erf(distance_min_ideal_survey/pow(C, 0.5)) - 2.0*distance_min_ideal_survey*exp( -pow(distance_min_ideal_survey,2)/C ) ) );
     double integral_res = (  M_PI*C*(  pow(M_PI, 0.5)*pow(C,0.5) ) ); 
 
     // to normalize the probability density function to integrate up to 1 
@@ -1206,38 +1001,6 @@ vector< vector<double> > compute_Q_qi(){
     } //end while loop 
     
     //---------------------------------------------------------------------------------------//
-    //---------------------------------------------------------------------------------------//
-    /*
-    string line; // we will loop through the lines in the file 
-    int numoflines = 0; // counter for lines in file 
-    ifstream idealdata; //instantiating object for mockdata file to read in 
-    idealdata.open("gaussian_mocks_small/idealsurvey.dat");
-    if (!(idealdata.is_open())) {throw "Failed to open input file: mock data.";}
-    
-    while ( getline(idealdata,line))
-    {
-      if (numoflines > -1) { 
-
-        stringstream ss(line);
-        vector<string> splitline;
-
-        while( ss.good() )
-        {
-          string substr;
-          getline( ss, substr, ' ' );
-          splitline.push_back( substr );
-        }     
-        // put data in globally defined vectors ... 
-        RA_ideal_survey.push_back(stod(splitline[0])); // right ascension (measured)
-        Dec_ideal_survey.push_back(stod(splitline[1])); // declination (measured)
-        r_ideal_survey.push_back(stod(splitline[2]));
-      } 
-      numoflines += 1;
-    } // end of while loop through mock data file 
-    idealdata.close();
-    */
-    //---------------------------------------------------------------------------------------//
-
 
     // now actually constructing the matrix cov(s_i, s'_j) - cov matrix of ideal data velocities with real data from surveys
     vector< vector<double> > cov_si_sjdash(realspace_galaxy_distances.size(), vector<double>(r_ideal_survey.size())); 
@@ -1247,7 +1010,6 @@ vector< vector<double> > compute_Q_qi(){
     double integral_prefactor = pow(Omega_matter_0, 1.1)*(H0*H0)/(2.0*(M_PI*M_PI));
 
     // now we can construct the covariance between the real data and the ideal data 
-    // #pragma omp parallel for 
     for (int i = 0; i < realspace_galaxy_distances.size(); i++){
         for(int jdash = 0; jdash < r_ideal_survey.size(); jdash++){
 
@@ -1280,9 +1042,7 @@ vector< vector<double> > compute_Q_qi(){
               }
 
             if (A == 0){ 
-                cov_si_sjdash[i][jdash] = integral_prefactor*(1.0/3.0)*int_over_pk;//*cos(alpha)*( gsl_spline_eval(P_mm_k_j0_kA_spline, A, P_mm_k_j0_kA_acc) ) +
-                //integral_prefactor*( int_over_k_Pk_ksquared_over_15 )*idist*jddist*pow(sin(alpha), 2);
-                
+                cov_si_sjdash[i][jdash] = integral_prefactor*(1.0/3.0)*int_over_pk;
             
             } else {
                 double term1 = integral_prefactor*(1.0/3.0)*cos(alpha)*(gsl_spline_eval(P_mm_k_j0_kA_spline, A, P_mm_k_j0_kA_acc)); 
@@ -1296,29 +1056,6 @@ vector< vector<double> > compute_Q_qi(){
         } // end loop through ideal survey data 
     } // end loop through real data 
 
-    //write_matrix_2_file(cov_si_sjdash, "Q_qi");
-
-    /*
-    // compute matrix for ideal weights 
-    vector< vector<double> > A_mat_weights(num_mode_funcs, vector<double>(num_mode_funcs));
-
-    for (int i = 0; i < num_mode_funcs; i++){
-      for (int j = 0; j < num_mode_funcs; j++){
-
-        for (int n = 0; n < r_ideal_survey.size(); n++){
-
-          double mode1 = mode_func_dot(i, RA_ideal_survey[n], Dec_ideal_survey[n], r_ideal_survey[n]);
-          double mode2 = mode_func_dot(j, RA_ideal_survey[n], Dec_ideal_survey[n], r_ideal_survey[n]);
-
-          A_mat_weights[i][j] += mode1*mode2/r_ideal_survey.size();
-
-        } // loop over n
-  
-      } // loop over j
-    } // loop over i
-
-    vector< vector<double> > A_mat_weights_inv = compute_matrix_inverse(A_mat_weights);
-    */
     // ok so have the covariance matrix. Now get the matrix Q_qi
     
     vector< vector<double> > Q_qi(num_mode_funcs, vector<double>(realspace_galaxy_distances.size()));
@@ -1337,27 +1074,6 @@ vector< vector<double> > compute_Q_qi(){
         } // end q loop
     } // end i loop
     
-    /*
-    vector< vector<double> > Q_qi(num_mode_funcs, vector<double>(realspace_galaxy_distances.size()));
-    //#pragma omp parallel for 
-    for (int i = 0; i < realspace_galaxy_distances.size(); i++){ // loop through i objects in real data
-      for(int q = 0; q < num_mode_funcs; q++){ // loop through q orthogonal modes 
-
-          for (int jdash = 0; jdash < r_ideal_survey.size(); jdash++){ // loop through ideal survey gals 
-
-            for (int l = 0; l < num_mode_funcs; l++){ // looping over A for matrix weights 
-
-              double modefunc_jl = mode_func_dot(l, RA_ideal_survey[jdash], Dec_ideal_survey[jdash], r_ideal_survey[jdash]);
-
-              Q_qi[q][i] += A_mat_weights_inv[q][l]*modefunc_jl*cov_si_sjdash[i][jdash]/(r_ideal_survey.size());
-
-            } // loop over A matrix for weights (loop over l)
-
-          } // end loop through ideal survey gals
-
-      } // end q loop
-    } // end i loop
-    */
     return Q_qi;
 
 }
