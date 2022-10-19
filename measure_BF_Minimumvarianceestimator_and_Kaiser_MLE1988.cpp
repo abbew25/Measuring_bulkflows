@@ -728,7 +728,7 @@ void precompute_stuff(){
     gsl_function F4;
     F4.function = &integrand_pk;
 
-    F3.params = &custom_params_int4;
+    F4.params = &custom_params_int4;
     gsl_integration_workspace * w4 = gsl_integration_workspace_alloc(1000);
 
     gsl_integration_qags(&F4, kmin, kmax, 1e-8, 1e-8, 1000, w4, &result4, &error4);
