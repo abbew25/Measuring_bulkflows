@@ -806,7 +806,7 @@ vector< vector<double> > compute_R_ij(){
           if (abs(A) < 1e-6) { A = 0.0; }
 
             if (A == 0){ 
-                R_ij_matrix[i][j] = integral_prefactor*(1.0/3.0)*int_over_pk; 
+                R_ij_matrix[i][j] += integral_prefactor*(1.0/3.0)*int_over_pk; 
                 
             } else {
 
@@ -815,7 +815,7 @@ vector< vector<double> > compute_R_ij(){
                 double term2 = - integral_prefactor*(1.0/3.0)*cos(alpha)*( 2.0*gsl_spline_eval(P_mm_k_j2_kA_spline, A, P_mm_k_j2_kA_acc) );
                 double term3 = integral_prefactor*(1.0/pow(A,2))*gsl_spline_eval(P_mm_k_j2_kA_spline, A, P_mm_k_j2_kA_acc)*idist*jdist*pow(sin(alpha), 2);
             
-                R_ij_matrix[i][j] = term1 + term2 + term3; 
+                R_ij_matrix[i][j] += term1 + term2 + term3; 
 
             } 
 
