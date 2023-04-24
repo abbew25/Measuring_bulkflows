@@ -5,7 +5,7 @@ Codes to implement various methods to calculate the Bulk Flow from a peculiar ve
 
 The additional code `BF_MVEpeery_MLEnusser.cpp` calculates the MVE described in Peery et al (2018) and the MLE method described in Nusser (2014). 
 
-### Some results from my research on the performance of these estimators when applying to mock peculiar velocity data
+## Some results from my research: testing the performance of bulk flow estimators with mock peculiar velocity data
 
 This repository will also soon have a PDF file showing various plots and results from applying the bulk flow estimators to mock data, in support of my upcoming paper to be submitted for publication.
 
