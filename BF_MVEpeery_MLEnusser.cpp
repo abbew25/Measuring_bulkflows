@@ -355,7 +355,7 @@ void read_in_mock_file_data() {
     // put data in globally defined vectors ... 
 
     RA.push_back(stod(splitline[0])); // right ascension (measured)
-    Dec.push_back(stod(splitline[1])-90.0); // declination (measured)
+    Dec.push_back(stod(splitline[1])); // declination (measured)
     z_obs.push_back(stod(splitline[2])); // observed redshift in sim
     logdist.push_back((stod(splitline[3]))); // observed log distance ratio
     logdist_err.push_back(stod(splitline[4])); // uncertainty on log distance ratio (as determined from observations)
@@ -392,7 +392,7 @@ void read_in_density_power_spectrum(){
       {
         string substr;
         getline( ss, substr, ' ' );
-        k_vector.push_back( stod(substr)*h );
+        k_vector.push_back( stod(substr) );
       }
 
 
@@ -404,7 +404,7 @@ void read_in_density_power_spectrum(){
       {
         string substr;
         getline( ss, substr, ' ' );
-        Pk_vector.push_back( stod(substr)/(h*h*h) );
+        Pk_vector.push_back( stod(substr) );
       }
 
     }
@@ -924,9 +924,9 @@ double mode_func_dot(double modefunc_index, double ra_angle, double dec_angle, d
 
   double res = 0;
 
-  double xhat = cos(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
-  double yhat = sin(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
-  double zhat = cos(dec_angle*M_PI/180.0);
+  double xhat = cos(ra_angle*M_PI/180.0)*sin((dec_angle+90.0)*M_PI/180.0);
+  double yhat = sin(ra_angle*M_PI/180.0)*sin((dec_angle+90.0)*M_PI/180.0);
+  double zhat = cos((dec_angle+90.0)*M_PI/180.0);
 
   // BF moments ------------------------------------------------------------------------
 
