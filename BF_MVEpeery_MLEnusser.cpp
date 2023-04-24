@@ -357,9 +357,9 @@ void read_in_mock_file_data() {
     RA.push_back(stod(splitline[0])); // right ascension (measured)
     Dec.push_back(stod(splitline[1])-90.0); // declination (measured)
     z_obs.push_back(stod(splitline[2])); // observed redshift in sim
-    logdist.push_back((stod(splitline[5]))); // observed log distance ratio
-    logdist_err.push_back(stod(splitline[6])); // uncertainty on log distance ratio (as determined from observations)
-    nbar.push_back(stod(splitline[7])*1e-6); 
+    logdist.push_back((stod(splitline[3]))); // observed log distance ratio
+    logdist_err.push_back(stod(splitline[4])); // uncertainty on log distance ratio (as determined from observations)
+    nbar.push_back(stod(splitline[5])*1e-6); 
 
     numoflines += 1;
 
