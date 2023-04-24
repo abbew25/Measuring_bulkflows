@@ -137,8 +137,6 @@ double distance_max_ideal_survey = 500.0; // mpc
 double distance_min_ideal_survey = 0.0; // mpc 
 double C = 2.0*R_I*R_I; // just a constant to use later 
 double max_ideal_RA = 360.0;
-double max_ideal_Dec = 180.0; // setting sky coverage for ideal survey (it should be fully sky, basically). What I call RA/Dec in this code 
-// this code is really RA and Dec+90.0, because the values range from 0-360 for RA, and 0-180 for Dec (Dec should really be -90,90 for real data).
 
 // vectors where we will save data from in file (mock data)
 vector<double> RA,Dec,z_obs,logdist,logdist_err; 
