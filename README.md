@@ -33,7 +33,7 @@ For saving this kind of object to a file use:
 `write_matrix_2_file(matrix_object, "desired_file_name");`
 
 ## Input files
-The codes reads in 2 input files, a power spectrum (powerspectrum.csv, which is a file with 1 column and 2 rows, a list of k values and a list of P(k) values). The second file is an example mock survey (example_surveymock.dat), which has the following measurements for galaxies: right ascension, declination + 90 degrees, observed spectroscopic redshift, observed radial peculiar velocity,  observed radial peculiar velocity uncertainty/error, observed log-distance ratio, observed log-distance ratio uncertainty/error, and finally n(r) (mean number density of objects (per Mpc) in the survey at the point the galaxy lies at).
+The codes reads in 2 input files, a power spectrum (powerspectrum.csv, which is a file with 1 column and 2 rows, a list of k values and a list of P(k) values). The second file is an example mock survey (example_surveymock.dat), which has the following measurements for galaxies: right ascension, declination + 90 degrees, observed spectroscopic redshift, observed log-distance ratio, observed log-distance ratio uncertainty/error, and finally n(r) (mean number density of objects (per Mpc) in the survey at the point the galaxy lies at). The last 3 columns have the real x,y and z velocities also.
 
 The codes uses the estimator of Watkins et al (2015) to convert observed log-distance ratios (and their uncertainties) to a peculiar velocity observation and uncertainty, although it can be altered to read in directly the observed peculiar velocity observation and uncertainty instead in the function `read_in_mock_file_data()`.
 
