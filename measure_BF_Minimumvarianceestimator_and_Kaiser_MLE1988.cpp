@@ -3,7 +3,7 @@
 
 
 // To compile: 
-// g++-11 -lgsl -lgslcblas -fopenmp -lm -llapack -lblas measure_BF_Minimumvarianceestimator_and_Kaiser_MLE1988.cpp -o measure_BF_Minimumvarianceestimator_and_Kaiser_MLE1988.exe
+// g++ -lgsl -lgslcblas -fopenmp -lm -llapack -lblas measure_BF_Minimumvarianceestimator_and_Kaiser_MLE1988.cpp -o measure_BF_Minimumvarianceestimator_and_Kaiser_MLE1988.exe
 // ------------------------------------------------------------------------------------------------------------
 
 // script for MVE analysis 
@@ -379,8 +379,8 @@ void read_in_mock_file_data() {
         RA.push_back(stod(splitline[0])); // right ascension (measured)
         Dec.push_back(stod(splitline[1])-90.0); // declination (measured)
         z_obs.push_back(stod(splitline[2])); // observed redshift in sim
-        logdist.push_back(stod(splitline[5])); // observed log distance ratio
-        logdist_err.push_back(stod(splitline[6])); // uncertainty on log distance ratio (as determined from observations)
+        logdist.push_back(stod(splitline[3])); // observed log distance ratio
+        logdist_err.push_back(stod(splitline[4])); // uncertainty on log distance ratio (as determined from observations)
 
     } // close of if state for numoflines > 1
 
