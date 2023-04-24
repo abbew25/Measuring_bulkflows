@@ -1,7 +1,7 @@
 // compile with eigen, lapack, fopenmp, gsl, use flag -O3 for significant speed up....
 
 /*
-g++-11 -lgsl -lgslcblas -lblas -llapack -lm -fopenmp -O3 -I/opt/homebrew/include/eigen3/ 
+g++ -lgsl -lgslcblas -lblas -llapack -lm -fopenmp -O3 -I/opt/homebrew/include/eigen3/ 
 -I/usr/local/include -L/usr/local/lib BF_MVEpeery_MLEnusser_code.cpp 
 -o BF_MVEpeery_MLEnusser_code.exe -Wall -Wextra
 */
