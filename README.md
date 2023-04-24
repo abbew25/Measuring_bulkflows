@@ -1,5 +1,5 @@
 # Measuring_bulkflows
-Codes to implement various methods to calculate the Bulk Flow from a peculiar velocity survey. The code `measure_BF_Minimumvarianceestimator_and_Kaiser_MLE1988.cpp` calculates the MLE Bulk Flow (Kaiser, 1988) and the Minimum Variance Estimator by Watkins, Feldman and Hudson (2009) Bulk Flow. It can also calculate the higher order moments of the velocity field (see Hudson et al, 2010). 
+Codes to implement various methods to calculate the Bulk Flow from a peculiar velocity survey. The code `measure_BF_Minimumvarianceestimator_and_Kaiser_MLE1988.cpp` calculates the MLE Bulk Flow (Kaiser, 1988) and the Minimum Variance Estimator by Watkins, Feldman and Hudson (2009) Bulk Flow. It can also calculate the higher order moments of the velocity field with some simple modifications to the main part of the script that outputs the results to a file and by changing the number of mode functions included in the analysis with the variable `num_mode_funcs` (see Hudson et al, 2010, for more details about higher order modes of the peculiar velocity field). 
 
 Some bug fixes have been made that caused the code to generate biased results for irregular survey geometries. This has been updated now. 
 
