@@ -35,12 +35,12 @@ For saving this kind of object to a file use:
 ## Input files
 The codes reads in 2 input files, a power spectrum (powerspectrum.csv, which is a file with 1 column and 2 rows, a list of k values and a list of P(k) values). The second file is an example mock survey (example_surveymock.dat), which has the following measurements for galaxies: right ascension, declination, observed spectroscopic redshift, observed log-distance ratio, observed log-distance ratio uncertainty/error, n(r) (mean number density of objects (per Mpc * 1e6) in the survey at the point the galaxy lies at). The last 3 columns have the real vx,vy and vz velocities.
 
-The codes uses the estimator of Watkins et al (2015) to convert observed log-distance ratios (and their uncertainties) to a peculiar velocity observation and uncertainty, although it can be altered to read in directly the observed peculiar velocity observation and uncertainty instead in the function `read_in_mock_file_data()`.
+The codes uses the estimator of Watkins et al (2015) to convert observed log-distance ratios (and their uncertainties) to a peculiar velocity observation and uncertainty, although it can be altered to read in directly the observed peculiar velocity observation and uncertainty instead (if desired by the user) the function `read_in_mock_file_data()`.
 
 
 ## Output 
 The codes outputs bulk flow modes and the uncertainty for each mode with the results in a choice of arbitrary coordinates, defined by 
-$\hat{x} = \cos(\mathrm{RA})\sin(\mathrm{Dec})$,
-$\hat{y} = \sin(\mathrm{RA})\sin(\mathrm{Dec})$, 
-$\hat{z} = \cos(\mathrm{Dec})$. 
+$\hat{x} = \cos(\mathrm{RA})\sin(\mathrm{Dec}+90)$,
+$\hat{y} = \sin(\mathrm{RA})\sin(\mathrm{Dec}+90)$, 
+$\hat{z} = \cos(\mathrm{Dec}+90)$. 
 
