@@ -42,5 +42,5 @@ The codes uses the estimator of Watkins et al (2015) to convert observed log-dis
 The codes outputs bulk flow modes and the uncertainty for each mode with the results in a choice of arbitrary coordinates, defined by 
 $\hat{x} = \cos(\mathrm{RA})\sin(\mathrm{Dec}+90)$,
 $\hat{y} = \sin(\mathrm{RA})\sin(\mathrm{Dec}+90)$, 
-$\hat{z} = \cos(\mathrm{Dec}+90)$. 
+$\hat{z} = \cos(\mathrm{Dec}+90)$. These should match the coordinate directions of the real velocities given in the last columns of the input example file (for comparing the output of the estimators to the expectation using the real velocities of the objects in the simulation).
 
