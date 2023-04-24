@@ -24,6 +24,6 @@ The code reads in 2 input files, a power spectrum (powerspectrum.csv, which is a
 The code uses the estimator of Watkins et al (2015) to convert observed log-distance ratios (and their uncertainties) to a peculiar velocity observation and uncertainty, although it can be altered to read in directly the observed peculiar velocity observation and uncertainty instead in the function `read_in_mock_file_data()`.
 
 The code outputs bulk flows in a choice of arbitrary coordinates, defined by 
-$\hat{x} = cos(RA)sin(Dec)$,
-`\hat{y} = sin(RA)sin(Dec)`, 
-`\hat{z} = cos(Dec)`. 
+$\hat{x} = \cos(\mathrm{RA})\sin(\mathrm{Dec})$,
+$\hat{y} = \sin(\mathrm{RA})\sin(\mathrm{Dec})$, 
+$\hat{z} = \cos(\mathrm{Dec})$. 
