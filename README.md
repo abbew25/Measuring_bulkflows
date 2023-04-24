@@ -22,3 +22,8 @@ For saving this kind of object to a file use:
 The code reads in 2 input files, a power spectrum (powerspectrum.csv, which is a file with 1 column and 2 rows, a list of k values and a list of P(k) values). The second file is an example mock survey, which has the following measurements for galaxies: right ascension, declination, observed spectroscopic redshift, observed radial peculiar velocity,  observed radial peculiar velocity uncertainty/error, observed log-distance ratio, observed log-distance ratio uncertainty/error. 
 
 The code uses the estimator of Watkins et al (2015) to convert observed log-distance ratios (and their uncertainties) to a peculiar velocity observation and uncertainty, although it can be altered to read in directly the observed peculiar velocity observation and uncertainty instead in the function `read_in_mock_file_data()`.
+
+The code outputs bulk flows in a choice of arbitrary coordinates, defined by 
+`\hat{x} = cos(RA)sin(Dec)`, 
+`\hat{y} = sin(RA)sin(Dec)`, 
+`\hat{z} = cos(Dec)`. 
