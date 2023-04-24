@@ -32,7 +32,7 @@ using namespace std::chrono;
 
 
 // declare global variables and functions - full function definitions can be found after main()
-string mock_data_file_name;
+string mock_data_file_name = "example_surveymock.dat";
 string powerspectrum_file_name = "powerspectrum.csv";
 
 void read_in_mock_file_data(); // function decleration to read in mock data - function definition can be found below main()
@@ -168,8 +168,6 @@ int main (int argc, char **argv) {
 
     auto start = high_resolution_clock::now(); // starting timer for script execution
 
-    mock_data_file_name = "example_surveymock.dat";
-
     // call our function to read in the mock data 
     read_in_mock_file_data();
 
@@ -226,30 +224,6 @@ int main (int argc, char **argv) {
 
     // now calculate the error bars for the BF components
     vector< vector<double> > cov_vel_moments_ab = calculate_covariance_velocity_moments(weights_pn, G_ij);
-
-    // compare BF output to result from just using ideal weights (summing up projections of radial velocities onto 3 coordinate axes)
-    // this is definitely not guaranteed to give the right result.
-    
-    double BF_x_2 = 0;
-    double BF_y_2 = 0; 
-    double BF_z_2 = 0;
-    double integral_n_r = 0;
-
-    for (int i = 0; i < z_obs.size(); i++){
-
-          double ideal_weight_gauss = 1.0/(z_obs.size());//exp( -1.0*pow(realspace_galaxy_distances[i],2)/(2.0*pow(R_I,2)) );
-          BF_x_2 += 3.0*object_pvs[i]*mode_func_dot(0, RA[i], Dec[i], realspace_galaxy_distances[i])*(ideal_weight_gauss); ///z_obs.size();
-          BF_y_2 += 3.0*object_pvs[i]*mode_func_dot(1, RA[i], Dec[i], realspace_galaxy_distances[i])*(ideal_weight_gauss); // /z_obs.size();
-          BF_z_2 += 3.0*object_pvs[i]*mode_func_dot(2, RA[i], Dec[i], realspace_galaxy_distances[i])*(ideal_weight_gauss);// /z_obs.size();
-          
-      }
-
-    cout << "BFs recovered from MVE, their error, BFs recovered (using ideal weights): " << endl;
-
-    cout << BF_x << " " << sqrt(cov_vel_moments_ab[0][0]) << " " << BF_x_2 << endl;
-    cout << BF_y << " " << sqrt(cov_vel_moments_ab[1][1]) << " " << BF_y_2 << endl;
-    cout << BF_z << " " << sqrt(cov_vel_moments_ab[2][2]) << " " << BF_z_2 << endl;
-
     
     // NEED TO COMMENT THIS BACK IN to write results to a file ------------------------------
     
@@ -257,9 +231,8 @@ int main (int argc, char **argv) {
     // write the results to a file 
     ofstream results_file;
     results_file.open(("BF_MVE_result.txt" ));
-    results_file << ID << " " << origmock_num << " " << BFnum << " " << BF_x << " " << BF_y << " " << BF_z;
-    results_file << " " << sqrt(cov_vel_moments_ab[0][0]) << " " << sqrt(cov_vel_moments_ab[1][1]) << " " << sqrt(cov_vel_moments_ab[2][2]) << " ";
-    results_file << BF_x_2 << " " << BF_y_2 << " " << BF_z_2 << endl;
+    results_file << ID << " " << origmock_num << " " << BFnum << " " << BF_x << " " << BF_y << " " << BF_z << endl;
+    results_file << " " << sqrt(cov_vel_moments_ab[0][0]) << " " << sqrt(cov_vel_moments_ab[1][1]) << " " << sqrt(cov_vel_moments_ab[2][2]) << endl; 
     results_file.close();
 
     // write the covariance matrix to a file 
@@ -293,17 +266,11 @@ int main (int argc, char **argv) {
         BF_z_mle += MLE_weights_pn[2][i]*object_pvs[i];
     }
 
-    cout << "BFs MLE, error: " << endl;
-
-    cout << BF_x_mle << " " << sqrt(cov_matrix_MLE[0][0]) << endl;
-    cout << BF_y_mle << " " << sqrt(cov_matrix_MLE[1][1]) << endl;
-    cout << BF_z_mle << " " << sqrt(cov_matrix_MLE[2][2]) << endl;
-
     // write the results to a file 
     ofstream results_file2;
     results_file2.open(("BF_MLE_result.txt" ));
-    results_file2 << ID << " " << origmock_num << " " << BFnum << " " << BF_x_mle << " " << BF_y_mle << " " << BF_z_mle;
-    results_file2 << " " << sqrt(cov_matrix_MLE[0][0]) << " " << sqrt(cov_matrix_MLE[1][1]) << " " << sqrt(cov_matrix_MLE[2][2]) << " ";
+    results_file2 << ID << " " << origmock_num << " " << BFnum << " " << BF_x_mle << " " << BF_y_mle << " " << BF_z_mle << endl; 
+    results_file2 << " " << sqrt(cov_matrix_MLE[0][0]) << " " << sqrt(cov_matrix_MLE[1][1]) << " " << sqrt(cov_matrix_MLE[2][2]) << endl; 
     results_file2.close();
 
     // write the MLE covariance matrix to a file 
@@ -362,8 +329,7 @@ void read_in_mock_file_data() {
   while ( getline(mockdata,line))
   {
 
-    if (numoflines > -1) { 
-
+    
       stringstream ss(line);
       vector<string> splitline;
 
@@ -377,13 +343,12 @@ void read_in_mock_file_data() {
       // put data in globally defined vectors ... 
 
         RA.push_back(stod(splitline[0])); // right ascension (measured)
-        Dec.push_back(stod(splitline[1])-90.0); // declination (measured)
+        Dec.push_back(stod(splitline[1])); // declination (measured)
         z_obs.push_back(stod(splitline[2])); // observed redshift in sim
         logdist.push_back(stod(splitline[3])); // observed log distance ratio
         logdist_err.push_back(stod(splitline[4])); // uncertainty on log distance ratio (as determined from observations)
 
-    } // close of if state for numoflines > 1
-
+    
     numoflines += 1;
 
   } // end of while loop through mock data file 
@@ -1208,128 +1173,94 @@ double mode_func_dot(double modefunc_index, double ra_angle, double dec_angle, d
 
   double res = 0;
 
+  double xhat = cos(ra_angle*M_PI/180.0)*sin((dec_angle+90.0)*M_PI/180.0);
+  double yhat = sin(ra_angle*M_PI/180.0)*sin((dec_angle+90.0)*M_PI/180.0);
+  double zhat = cos((dec_angle+ 90.0)*M_PI/180.0);
+
   // BF moments ------------------------------------------------------------------------
 
   if (modefunc_index == 0){ // BF x
 
-    res = cos(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
+    res = xhat;
 
   } else if (modefunc_index == 1){ // BF y
 
-    res = sin(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
+    res = yhat; 
 
   } else if (modefunc_index == 2){ // BF z
 
-    res = cos(dec_angle*M_PI/180.0);
-
+    res = zhat; 
   // shear moments ----------------------------------------------------------------------
-
+  
   } else if (modefunc_index == 3){ // shear xx
 
-    double xhat = cos(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
     res = r_dist*xhat*xhat;
 
   } else if (modefunc_index == 4){ // shear yy
 
-    double yhat = sin(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
     res = r_dist*yhat*yhat;
 
   } else if (modefunc_index == 5){ // shear zz
 
-    double zhat = cos(dec_angle*M_PI/180.0);
     res = r_dist*zhat*zhat;
 
   } else if (modefunc_index == 6){ // shear xy
 
-    double xhat = cos(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
-    double yhat = sin(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
     res = 2.0*r_dist*xhat*yhat;
 
   } else if (modefunc_index == 7){ // shear yz
 
-    double zhat = cos(dec_angle*M_PI/180.0);
-    double yhat = sin(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
     res = 2.0*r_dist*zhat*yhat;
 
   } else if (modefunc_index == 8){ // shear xz
 
-    double xhat = cos(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
-    double zhat = cos(dec_angle*M_PI/180.0);
     res = 2.0*r_dist*xhat*zhat;
 
   // octupole moments -------------------------------------------------------------------- 
 
   } else if (modefunc_index == 9){ // octupole xxx
 
-    double xhat = cos(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
     res = pow(r_dist,2)*xhat*xhat*xhat - xhat*( M_PI*pow(r_dist,4)/3.0 ); 
-
 
   } else if (modefunc_index == 10){ // octupole yyy 
 
-    double yhat = sin(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
     res = pow(r_dist,2)*yhat*yhat*yhat - yhat*( M_PI*pow(r_dist,4)/3.0 );
-
 
   } else if (modefunc_index == 11){ // octupole zzz 
 
-    double zhat = cos(dec_angle*M_PI/180.0);
     res = pow(r_dist,2)*zhat*zhat*zhat - zhat*( M_PI*pow(r_dist,4)/3.0 );
-
 
   } else if (modefunc_index == 12){ // octupole xxy
 
-    double xhat = cos(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
-    double yhat = sin(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
     res = 3.0*pow(r_dist,2)*xhat*xhat*yhat - yhat*( M_PI*pow(r_dist,4)/3.0 );
-
 
   } else if (modefunc_index == 13){ // octupole yyz 
 
-    double zhat = cos(dec_angle*M_PI/180.0);
-    double yhat = sin(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
     res = 3.0*pow(r_dist,2)*yhat*yhat*zhat - zhat*( M_PI*pow(r_dist,4)/3.0 );
-
 
   } else if (modefunc_index == 14){ // octupole zzx 
 
-    double zhat = cos(dec_angle*M_PI/180.0);
-    double xhat = cos(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
     res = 3.0*pow(r_dist,2)*xhat*zhat*zhat - xhat*( M_PI*pow(r_dist,4)/3.0 );
-
 
   } else if (modefunc_index == 15){ // octupole yyx
 
-    double yhat = sin(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
-    double xhat = cos(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
     res = 3.0*pow(r_dist,2)*xhat*yhat*yhat - xhat*( M_PI*pow(r_dist,4)/3.0 );
-
 
   } else if (modefunc_index == 16){ // octupole zzy
 
-    double zhat = cos(dec_angle*M_PI/180.0);
-    double yhat = sin(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
     res = 3.0*pow(r_dist,2)*yhat*zhat*zhat - yhat*( M_PI*pow(r_dist,4)/3.0 );
-
 
   } else if (modefunc_index == 17){ // octupole xxz 
 
-    double zhat = cos(dec_angle*M_PI/180.0);
-    double xhat = cos(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
     res = 3.0*pow(r_dist,2)*xhat*xhat*zhat - zhat*( M_PI*pow(r_dist,4)/3.0 );
-
 
   } else if (modefunc_index == 18){ // octupole xyz 
 
-    double xhat = cos(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
-    double yhat = sin(ra_angle*M_PI/180.0)*sin(dec_angle*M_PI/180.0);
-    double zhat = cos(dec_angle*M_PI/180.0);
     res = 6.0*pow(r_dist,2)*xhat*yhat*zhat;
-
 
   }
 
-  return res; 
+  return res;  
 }
 
 
