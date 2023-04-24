@@ -21,13 +21,14 @@ For saving this kind of object to a file use:
 `write_matrix_2_file(matrix_object, "desired_file_name");`
 
 ## Input files
-The code reads in 2 input files, a power spectrum (powerspectrum.csv, which is a file with 1 column and 2 rows, a list of k values and a list of P(k) values). The second file is an example mock survey, which has the following measurements for galaxies: right ascension, declination + 90 degrees, observed spectroscopic redshift, observed radial peculiar velocity,  observed radial peculiar velocity uncertainty/error, observed log-distance ratio, observed log-distance ratio uncertainty/error. 
+The code reads in 2 input files, a power spectrum (powerspectrum.csv, which is a file with 1 column and 2 rows, a list of k values and a list of P(k) values). The second file is an example mock survey (example_surveymock.dat), which has the following measurements for galaxies: right ascension, declination + 90 degrees, observed spectroscopic redshift, observed radial peculiar velocity,  observed radial peculiar velocity uncertainty/error, observed log-distance ratio, observed log-distance ratio uncertainty/error. 
 
 The code uses the estimator of Watkins et al (2015) to convert observed log-distance ratios (and their uncertainties) to a peculiar velocity observation and uncertainty, although it can be altered to read in directly the observed peculiar velocity observation and uncertainty instead in the function `read_in_mock_file_data()`.
 
 
 ## Output 
-The code outputs bulk flow modes, the uncertainty for each mode, and the covariance matrix, with the results in a choice of arbitrary coordinates, defined by 
+The code outputs bulk flow modes and the uncertainty for each mode (BF_MVE_results.txt), and the covariance matrix (BF_MVE_cov.txt), with the results in a choice of arbitrary coordinates, defined by 
 $\hat{x} = \cos(\mathrm{RA})\sin(\mathrm{Dec})$,
 $\hat{y} = \sin(\mathrm{RA})\sin(\mathrm{Dec})$, 
 $\hat{z} = \cos(\mathrm{Dec})$. 
+
