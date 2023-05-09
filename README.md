@@ -7,7 +7,7 @@ The additional code `BF_MVEpeery_MLEnusser.cpp` calculates the MVE described in 
 
 ## Some results from my research: testing the performance of bulk flow estimators with mock peculiar velocity data
 
-This repository will also soon have a PDF file showing various plots and results from applying the bulk flow estimators to mock data, in support of my upcoming paper to be submitted for publication.
+This repository has a PDF file showing various plots and results from applying the bulk flow estimators to mock data, which are supporting results for my upcoming paper to be submitted for publication.
 
 ## Updates 
 Some bug fixes have been made that caused the code to generate biased results for irregular survey geometries. This has been updated now. 
