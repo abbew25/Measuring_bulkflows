@@ -230,7 +230,7 @@ int main (int argc, char **argv) {
     // write the results to a file 
     ofstream results_file;
     results_file.open(("BF_MVE_result.txt" ));
-    results_file << ID << " " << origmock_num << " " << BFnum << " " << BF_x << " " << BF_y << " " << BF_z << endl;
+    results_file << BF_x << " " << BF_y << " " << BF_z << endl;
     results_file << " " << sqrt(cov_vel_moments_ab[0][0]) << " " << sqrt(cov_vel_moments_ab[1][1]) << " " << sqrt(cov_vel_moments_ab[2][2]) << endl; 
     results_file.close();
 
@@ -268,7 +268,7 @@ int main (int argc, char **argv) {
     // write the results to a file 
     ofstream results_file2;
     results_file2.open(("BF_MLE_result.txt" ));
-    results_file2 << ID << " " << origmock_num << " " << BFnum << " " << BF_x_mle << " " << BF_y_mle << " " << BF_z_mle << endl; 
+    results_file2 << " " << BF_x_mle << " " << BF_y_mle << " " << BF_z_mle << endl; 
     results_file2 << " " << sqrt(cov_matrix_MLE[0][0]) << " " << sqrt(cov_matrix_MLE[1][1]) << " " << sqrt(cov_matrix_MLE[2][2]) << endl; 
     results_file2.close();
 
