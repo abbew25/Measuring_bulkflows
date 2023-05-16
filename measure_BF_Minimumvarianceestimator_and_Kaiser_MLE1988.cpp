@@ -123,7 +123,7 @@ void write_matrix_2_file(vector< vector<double> > matrix_2_write, string filepat
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 
-double H0 = 67.32; // km/s/MPC (Hubble constant). No, my code is not in units of little h for distances, although it probably should be.
+double H0 = 67.32; // km/s/MPC (Hubble constant).
 double Omega_matter_0 = 0.30; // dimensionless matter density 
 double Omega_Lambda_0 = 1 - Omega_matter_0; // cosmological constant 
 double eos_matter = 0.0; // equation of state for matter
