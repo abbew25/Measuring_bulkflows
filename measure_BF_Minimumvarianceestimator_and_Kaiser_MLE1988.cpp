@@ -136,7 +136,6 @@ double R_I = 70.0; // Mpc, ideal survey gaussian width / standard deviation
 double distance_max_ideal_survey = 500.0; // mpc 
 double distance_min_ideal_survey = 0.0; // mpc 
 double C = 2.0*R_I*R_I; // just a constant to use later 
-double max_ideal_RA = 360.0;
 
 // vectors where we will save data from in file (mock data)
 vector<double> RA,Dec,z_obs,logdist,logdist_err; 
