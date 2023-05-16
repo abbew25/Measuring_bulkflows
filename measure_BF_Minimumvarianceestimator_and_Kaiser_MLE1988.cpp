@@ -1,5 +1,5 @@
 
-// computes the BF using the MVE of Feldman 2010 first, and then using MLE of Kaiser 1988 second
+// computes the BF using the MVE of Watkins 2009 first, and then using MLE of Kaiser 1988 second
 
 
 // To compile: 
