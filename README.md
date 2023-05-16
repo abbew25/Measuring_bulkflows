@@ -5,6 +5,8 @@ Codes to implement various methods to calculate the Bulk Flow from a peculiar ve
 
 The additional code `BF_MVEpeery_MLEnusser.cpp` calculates the MVE described in Peery et al (2018) and the MLE method described in Nusser (2014). 
 
+The python script can be used to compare the output/estimated bulk flows to the expected results from the estimators. All .txt files are just example results from the estimators. 
+
 ## Some results from my research: testing the performance of bulk flow estimators with mock peculiar velocity data
 
 This repository has a PDF file showing various plots and results from applying the bulk flow estimators to mock data, which are supporting results for my upcoming paper to be submitted for publication.
