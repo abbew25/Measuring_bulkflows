@@ -125,7 +125,6 @@ int num_mode_funcs = 3; // use 3 for just BF, 9 for BF + shear, 19 for BF + shea
 int num_ideal_objects_read_in = 10000; // objects to read in from a data file with an 'ideal' survey selection 
 double distance_max_ideal_survey = 500.0; // mpc 
 double distance_min_ideal_survey = 0.0; // mpc 
-double max_ideal_RA = 360.0;
 
 
 
