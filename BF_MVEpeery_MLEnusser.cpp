@@ -182,12 +182,12 @@ int main (int argc, char **argv) {
     // compute the matrix G_ij of the galaxies (G_ij (aka R_ij) = peculiar velocity data covariance matrix)
     vector< vector<double> > G_ij = compute_R_ij(); // getting velocity covariance part 
     //vector< vector<double> > G_ij_inverse = compute_matrix_inverse(G_ij);
-    vector< vector<double> > G_ij_inverse = block_matrix_inverse(G_ij); // use block matrix inverse for bigger matrices 
+    vector< vector<double> > G_ij_inverse = block_matrix_inverse(G_ij); // use block matrix inverse for bigger matrices
     cout << "G_ij, and inverse done" << endl; 
 
     double B = B_val(G_ij_inverse);
 
-    cout << "B: " << B << endl;
+    //cout << "B: " << B << endl;
 
     vector<double> Li = Li_vector(B, G_ij_inverse);
 
@@ -200,14 +200,11 @@ int main (int argc, char **argv) {
 
     vector< vector<double> > lambdaij = lambda_ij_matrix(Mij_inverse, G_ij_inverse, Q_im, Di);
 
-    //print_2D_matrix(lambdaij, "lambdaij matrix");
-
     vector<double> Betai = Beta_i_vector(Di, lambdaij, Li);
-
 
     vector< vector<double> > weights_mve_peery = weights_in_peery2018(G_ij_inverse, Q_im, lambdaij, Betai);
 
-    cout << "Peery MVE done" << endl;  
+    cout << "Peery MVE weights done" << endl;  
     
     /*-----------------------------------------------------------------------------------------------*/
     
@@ -252,7 +249,7 @@ int main (int argc, char **argv) {
 
     vector< vector<double> > weights_mle_nusser = compute_MLE_weights_nusser_weight();
 
-    cout << "Nusser MLE done" << endl; 
+    cout << "Nusser MLE weights done" << endl; 
 
     /*-----------------------------------------------------------------------------------------------*/
 
