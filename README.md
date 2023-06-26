@@ -12,6 +12,8 @@ The python script can be used to compare the output/estimated bulk flows to the 
 This repository has a PDF file showing various plots and results from applying the bulk flow estimators to mock data, which are supporting results for my upcoming paper to be submitted for publication.
 This can be found as Summary of results: testing BF estimators with mock data. The paper associated with this research can be found here: https://arxiv.org/pdf/2306.11269.pdf
 
+I also have a blog post related to this research: https://astrolaureate.github.io/projects/cosmicconflictsinbulkflowmeasurements
+
 ## Updates 
 Some bug fixes have been made that caused the code to generate biased results for irregular survey geometries. This has been updated now. 
 
