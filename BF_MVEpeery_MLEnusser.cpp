@@ -920,9 +920,9 @@ double mode_func_dot(double modefunc_index, double ra_angle, double dec_angle, d
 
   double res = 0;
 
-  double xhat = cos(ra_angle*M_PI/180.0)*sin((dec_angle+90.0)*M_PI/180.0);
-  double yhat = sin(ra_angle*M_PI/180.0)*sin((dec_angle+90.0)*M_PI/180.0);
-  double zhat = cos((dec_angle+90.0)*M_PI/180.0);
+  double xhat = cos(ra_angle*M_PI/180.0)*cos((dec_angle)*M_PI/180.0);
+  double yhat = sin(ra_angle*M_PI/180.0)*cos((dec_angle)*M_PI/180.0);
+  double zhat = sin((dec_angle)*M_PI/180.0);
 
   // BF moments ------------------------------------------------------------------------
 
