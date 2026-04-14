@@ -1284,7 +1284,7 @@ vector< vector<double> > compute_Q_qi(){
     while (counter < num_ideal_objects_read_in){
 
         RA_ideal_survey.push_back( dist_ra(eng) );
-        Dec_ideal_survey.push_back( acos(2.0*dist_dec(eng)-1.0)*180.0/M_PI );
+        Dec_ideal_survey.push_back( (acos(2.0*dist_dec(eng)-1.0) - M_PI/2.0)*180.0/M_PI );
         r_ideal_survey.push_back(dist_r(eng));
         counter += 1;
         
