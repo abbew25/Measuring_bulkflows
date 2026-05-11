@@ -28,7 +28,7 @@ The code `measure_BF_Minimumvarianceestimator_and_Kaiser_MLE1988.cpp` should be 
 
 The code `BF_MVEpeery_MLEnusser.cpp` is compiled using:
 
-`g++ -lgsl -lgslcblas -lblas -llapack -lm -fopenmp -O3 -I/opt/homebrew/include/eigen3/ -I/usr/local/include -L/usr/local/lib BF_MVEpeery_MLEnusser_code.cpp -o BF_MVEpeery_MLEnusser_code.exe -Wall -Wextra`.
+`g++ -lgsl -lgslcblas -lblas -llapack -lm -fopenmp -O3 -I/opt/homebrew/include/eigen3/ -I/usr/local/include -L/usr/local/lib BF_MVEpeery_MLEnusser.cpp -o BF_MVEpeery_MLEnusser.exe -Wall -Wextra`.
 
 The extra flags for the eigen package are because I have included a new function in this code that does block matrix inversion for the velocity covariance matrix that can compute the inverse of a very large matrix (up to 50,000 x 50,000 in size), it is slow but the lapack function throws an error when the matrix is this large. You will need to use multiple threads with fopenmp to get the matrix inversion done for a matrix this large. 
 
